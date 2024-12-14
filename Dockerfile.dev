@@ -1,0 +1,15 @@
+FROM node:16-alpine
+
+WORKDIR '/app'
+LABEL authors="birlaprasoon"
+
+COPY package.json .
+RUN npm install
+
+COPY . .
+
+CMD ["npm", "run", "test"]
+
+
+# docker build -f Dockerfile.dev .
+# docker run -p 3000:3000 -v /app/node_modules -v $(pwd):/app 102692ea7251 -- --coverage
