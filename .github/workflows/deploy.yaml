@@ -3,25 +3,20 @@ on:
   push:
     branches:
       - main
+      - dev
+
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build:
+  hello_world:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-      - run: docker build -t birlaprasoon/docker-react -f Dockerfile.dev .
-      - run: docker run -e CI=true birlaprasoon/docker-react npm test
+      - name: "Echo Basic information"
+        run: |
+          echo "REF: $GITHUB_REF"
+          echo "Job ID: $GITHUB_JOB"
+          echo "Action: $GITHUB_ACTION"
+          echo "Actor: $GITHUB_ACTOR"
 
-      - name: Generate deployment package
-        run: zip -r deploy.zip . -x '*.git*'
-
-      - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v18
-        with:
-          application_name: docker-gh
-          environment_name: Dockergh-env
-          existing_bucket_name: elasticbeanstalk-us-east-1-923445559289
-          region: us-east-1
-          version_label: ${{ github.sha }}
-          deployment_package: deploy.zip
